@@ -19,3 +19,20 @@
 *.exe
 *.out
 *.app
+
+
+*.tlog
+*.pdb
+*.ilk
+*.exp
+*.suo
+*.swp
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+/.gitignore~
