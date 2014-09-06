@@ -22,3 +22,33 @@ extern "C" __declspec(dllexport) double* __cdecl allocate_memory(int size)
 	return res;
 }
 extern "C" __declspec(dllexport) void __cdecl release_memory(double *x){delete[] x;}
+//structure
+typedef struct _Complex {
+	double re;
+	double im;
+} Complex;
+extern "C" __declspec(dllexport) Complex __cdecl add_complex(Complex c1, Complex c2)
+{
+	Complex res;
+	res.re = c1.re + c2.re;
+	res.im = c1.im + c2.im;
+	return res;
+}
+extern "C" __declspec(dllexport) Complex __cdecl sub_complex(Complex* c1, Complex* c2)
+{
+	Complex res;
+	res.re = c1->re - c2->re;
+	res.im = c1->im - c2->im;
+	return res;
+}
+//function pointer
+typedef double(__stdcall *Function)(double, double);
+extern "C" __declspec(dllexport) double __cdecl reduce(double* x, int size, Function func)
+{
+	double res = 0;
+	for(int i = 0; i < size; i++)
+	{
+		res += func(res, x[i]);
+	}
+	return res;
+}
