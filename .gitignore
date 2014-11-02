@@ -36,3 +36,8 @@ build/
 [Bb]in/
 [Oo]bj/
 /.gitignore~
+
+# for R language
+packrat/
+.Rhistory
+.Rproj.user/
