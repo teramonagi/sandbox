@@ -41,3 +41,4 @@ build/
 packrat/
 .Rhistory
 .Rproj.user/
+.Rproj.user
