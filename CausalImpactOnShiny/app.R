@@ -12,13 +12,13 @@ server <- function(input, output) {
   output$causalPlot <- renderPlot({
     post.period.response <- y[post.period[1] : post.period[2]]
     y[post.period[1] : post.period[2]] <- NA
-    bsts.model <- bsts(y ~ x1, AddLocalLevel(list(), y), niter = 100)
-    impact <- CausalImpact(bsts.model = bsts.model, post.period.response = post.period.response, alpha=input$alpha)
+    bsts.model <- bsts(y ~ x1, AddLocalLevel(list(), y), niter = 50)
+    impact <- CausalImpact(bsts.model = bsts.model, post.period.response = post.period.response, alpha=1-input$alpha)
     plot(impact, c("original", "pointwise"))
   })
   output$summary <- renderPrint({
+    print("Sales data")
     print(y)
-    print(x1)
   })  
 }
 
@@ -31,8 +31,8 @@ ui <- shinyUI(
                  h3("Causal Impact plot"),
                  plotOutput("causalPlot"),
                  wellPanel(
-                    sliderInput("alpha", "Confidential interval", 0.01, 0.1,
-                               value = 0.01, step = 0.01)
+                    sliderInput("alpha", "Confidential interval", 0.9, 0.99,
+                               value = 0.9, step = 0.01)
                  ),
                  p("powered by ", a(href="http://shiny.rstudio.com/", "Shiny"), "which is an ", a(href="www.rstudio.com", "RStudio"), "project.")
                )
