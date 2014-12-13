@@ -1,21 +1,16 @@
+library(pipeR)
 library(bsts)
-library(CausaImpact)
+library(CausalImpact)
 #sample data
-set.seed(1)
-x1 <- 100 + arima.sim(model = list(ar = 0.999), n = 100)
-y <- 1.2 * x1 + rnorm(100)
-y[71:100] <- y[71:100] + 10
-data <- cbind(y, x1)
-pre.period <- c(1, 70)
-post.period <- c(71, 100)
-data <- NULL
 server <- function(input, output) {
   output$causalPlot <- renderPlot({
     if(is.null(data)){return(NULL)}
-    post.period.response <- y[post.period[1] : post.period[2]]
-    y[post.period[1] : post.period[2]] <- NA
-    bsts.model <- bsts(y ~ x1, AddLocalLevel(list(), y), niter = 50)
-    impact <- CausalImpact(bsts.model = bsts.model, post.period.response = post.period.response, alpha=1-input$alpha)
+    pre.max <- which(data$period == 0) %>>% max
+    impact <- data %>>% select(-period) %>>% 
+      CausalImpact(pre.period = c(1, pre.max), 
+                   post.period=c(pre.max+1, nrow(data)), 
+                   alpha=1-input$alpha,
+                   model.args=list(niter=input$niter))
     plot(impact, c("original", "pointwise"))
   })
   output$summary <- renderPrint({
@@ -34,7 +29,8 @@ ui <- shinyUI(
                  h3("Causal Impact plot"),
                  plotOutput("causalPlot"),
                  wellPanel(
-                   sliderInput("alpha", "Confidential interval", 0.9, 0.99, value = 0.9, step = 0.01)
+                   sliderInput("alpha", "Confidential interval", 0.9, 0.99, value = 0.9, step = 0.01),
+                   sliderInput("niter", "Iteration ", 10^3, 10^4, value = 10^3, step = 10^3)
                  ),
                  p("powered by ", a(href="http://shiny.rstudio.com/", "Shiny"), "which is an ", a(href="www.rstudio.com", "RStudio"), "project.")
                )
@@ -69,4 +65,4 @@ ui <- shinyUI(
              )
     ),
     navbarMenu("More", tabPanel("About"))))
-  shinyApp(ui = ui, server = server)
+shinyApp(ui = ui, server = server)
