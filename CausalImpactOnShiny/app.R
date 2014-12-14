@@ -1,8 +1,7 @@
-library(pipeR)
-library(dplyr)
-library(bsts)
 library(shiny)
 library(CausalImpact)
+library(pipeR)
+library(dplyr)
 server <- function(input, output) {
   output$causalPlot <- renderPlot({
     if (is.null(input$file1)){return(NULL)}
