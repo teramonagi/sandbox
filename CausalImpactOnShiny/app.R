@@ -1,9 +1,12 @@
 library(pipeR)
+library(dplyr)
 library(bsts)
+library(shiny)
 library(CausalImpact)
-#sample data
 server <- function(input, output) {
   output$causalPlot <- renderPlot({
+    if (is.null(input$file1)){return(NULL)}
+    data <- read.csv(input$file1$datapath, header=input$header,sep=input$sep, quote=input$quote)
     if(is.null(data)){return(NULL)}
     pre.max <- which(data$period == 0) %>>% max
     impact <- data %>>% select(-period) %>>% 
